@@ -47,7 +47,7 @@ function state(initial) {
 	return [_get, _set];
 }
 
-
+/*
 function exampleFunctional() {
 	let [x, setX] = state(10);
 	console.log(x());
@@ -74,3 +74,4 @@ function main() {
 }
 
 main();
+*/
