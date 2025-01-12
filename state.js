@@ -28,23 +28,33 @@ class State {
 function state(initial) {
 	let state = initial;
 
-	function _set(new_state) {
-		if (typeof new_state === 'function') {
-			state = new_state(state);
-		} else {
-			state = new_state;
-		}
-	}
+	const middleware = {
+		before: [],
+		after: []
+	};
 
 	function _get() {
-		if (typeof state === 'function') {
-			return state();
-		} else {
-			return state;
-		}
+		return typeof state === 'function' ? state() : state;
 	}
 
-	return [_get, _set];
+	function _set(newState) {
+		middleware.before.forEach((fn) => fn(state, newState));
+
+		state = typeof newState === 'function' ? newState(state) : newState;
+
+		middleware.after.forEach((fn) => fn(state));
+	}
+
+	function addMiddleware(type, fn) {
+		if (type === 'before') middleware.before.push(fn);
+		if (type === 'after') middleware.after.push(fn);
+	}
+
+	return {
+		get: _get,
+		set: _set,
+		addMiddleware
+	};
 }
 
 /*
